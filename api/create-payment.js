@@ -1,67 +1,60 @@
-export default async function handler(req, res) {
+export default async function handler(req,res){
 
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
-
-
-  try {
-
-    const {
-      amount,
-      recipient
-    } = req.body;
+if(req.method !== "POST"){
+return res.status(405).json({
+error:"Method not allowed"
+});
+}
 
 
-    if (!process.env.PI_API_KEY) {
-      return res.status(500).json({
-        error:"Missing PI_API_KEY"
-      });
-    }
+try{
+
+const {
+paymentId,
+recipient
+}=req.body;
 
 
-    const response = await fetch(
-      "https://api.minepi.com/v2/payments",
-      {
-        method:"POST",
-        headers:{
-          "Authorization":`Key ${process.env.PI_API_KEY}`,
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          payment:{
-            amount:Number(amount),
-
-            memo:"Testnet reward",
-
-            metadata:{
-              recipient:recipient
-            }
-
-          }
-
-        })
-
-      }
-    );
+if(!paymentId){
+return res.status(400).json({
+error:"Missing paymentId"
+});
+}
 
 
-    const data = await response.json();
+// Ici on peut enregistrer le lien
+// paymentId -> wallet destinataire
+// dans une base de données plus tard
 
 
-    return res.status(200).json(data);
+console.log(
+"Payment:",
+paymentId,
+"Recipient:",
+recipient
+);
 
 
-  } catch(error){
+return res.status(200).json({
 
-    return res.status(500).json({
-      error:error.message
-    });
+success:true,
 
-  }
+paymentId,
+
+recipient
+
+});
+
+
+}
+catch(error){
+
+return res.status(500).json({
+
+error:error.message
+
+});
+
+}
 
 }
