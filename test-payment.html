@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test Paiements Pi</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f4f4;
+padding:20px;
+}
+
+.box{
+max-width:500px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 10px #ccc;
+}
+
+h2{
+text-align:center;
+color:#ff7f11;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#ff7f11;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-bottom:15px;
+}
+
+button:hover{
+background:#e66f00;
+}
+
+.result{
+font-size:14px;
+background:#eee;
+padding:10px;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+<h2>🚀 Pi Testnet App → User</h2>
+
+<p>
+Envoyer une récompense Testnet à 5 utilisateurs.
+</p>
+
+
+<input id="wallet1" placeholder="Adresse Wallet 1">
+
+<button onclick="send(1)">
+Envoyer 1
+</button>
+
+
+
+<input id="wallet2" placeholder="Adresse Wallet 2">
+
+<button onclick="send(2)">
+Envoyer 2
+</button>
+
+
+
+<input id="wallet3" placeholder="Adresse Wallet 3">
+
+<button onclick="send(3)">
+Envoyer 3
+</button>
+
+
+
+<input id="wallet4" placeholder="Adresse Wallet 4">
+
+<button onclick="send(4)">
+Envoyer 4
+</button>
+
+
+
+<input id="wallet5" placeholder="Adresse Wallet 5">
+
+<button onclick="send(5)">
+Envoyer 5
+</button>
+
+
+
+<div class="result" id="result">
+En attente...
+</div>
+
+
+</div>
+
+
+<script>
+
+
+async function send(number){
+
+
+let wallet =
+document.getElementById("wallet"+number).value.trim();
+
+
+if(!wallet){
+
+alert("Ajoute une adresse wallet");
+
+return;
+
+}
+
+
+
+document.getElementById("result").innerHTML =
+"⏳ Envoi en cours...";
+
+
+try{
+
+
+let response = await fetch("/api/send-payment",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+wallet_address:wallet,
+
+amount:0.01
+
+})
+
+});
+
+
+
+let data = await response.json();
+
+
+
+document.getElementById("result").innerHTML =
+JSON.stringify(data,null,2);
+
+
+
+}catch(error){
+
+
+document.getElementById("result").innerHTML =
+"Erreur : "+error.message;
+
+
+}
+
+
+}
+
+
+</script>
+
+
+</body>
+</html>
