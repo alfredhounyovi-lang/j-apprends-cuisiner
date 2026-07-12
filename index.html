@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>J'apprends à cuisiner</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f7f5;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.app{
+width:100%;
+max-width:900px;
+height:100vh;
+display:flex;
+flex-direction:column;
+background:white;
+box-shadow:0 0 20px rgba(0,0,0,.1);
+}
+
+header{
+background:#ff7f11;
+color:white;
+padding:18px;
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.logo{
+width:55px;
+height:55px;
+border-radius:50%;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+}
+
+.title h1{
+font-size:22px;
+}
+
+.title p{
+font-size:13px;
+opacity:.9;
+}
+
+.chat{
+flex:1;
+overflow-y:auto;
+padding:20px;
+background:#f8f8f8;
+}
+
+.message{
+margin-bottom:18px;
+display:flex;
+}
+
+.bot{
+justify-content:flex-start;
+}
+
+.user{
+justify-content:flex-end;
+}
+
+.bubble{
+max-width:75%;
+padding:15px;
+border-radius:15px;
+line-height:1.6;
+font-size:15px;
+}
+
+.bot .bubble{
+background:white;
+border:1px solid #ddd;
+}
+
+.user .bubble{
+background:#ff7f11;
+color:white;
+}
+
+.bottom{
+padding:15px;
+background:white;
+display:flex;
+gap:10px;
+border-top:1px solid #eee;
+}
+
+input{
+flex:1;
+padding:14px;
+border:1px solid #ccc;
+border-radius:12px;
+font-size:15px;
+outline:none;
+}
+
+button{
+background:#ff7f11;
+color:white;
+border:none;
+padding:0 25px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+transition:.3s;
+}
+
+button:hover{
+background:#e86e00;
+}
+
+@media(max-width:700px){
+
+.bubble{
+max-width:90%;
+}
+
+.title h1{
+font-size:18px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<div class="logo">
+🍳
+</div>
+
+<div class="title">
+<h1>J'apprends à cuisiner</h1>
+<p>Votre assistant culinaire intelligent</p>
+</div>
+
+</header>
+
+<div class="chat" id="chat">
+
+<div class="message bot">
+<div class="bubble">
+
+👋 Bonjour !
+
+Je suis votre assistant culinaire.
+
+Je peux vous aider à :
+
+✅ Trouver une recette
+
+✅ Apprendre à cuisiner
+
+✅ Adapter une recette
+
+✅ Donner des astuces de chef
+
+✅ Expliquer les techniques de cuisson
+
+Écrivez simplement votre question.
+
+</div>
+</div>
+
+</div>
+
+<div class="bottom">
+
+<input
+id="question"
+placeholder="Posez votre question..."
+>
+
+<button onclick="sendMessage()">
+
+Envoyer
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const chat=document.getElementById("chat");
+
+function addUser(text){
+
+chat.innerHTML+=`
+<div class="message user">
+<div class="bubble">${text}</div>
+</div>
+`;
+
+}
+
+function addBot(text){
+
+chat.innerHTML+=`
+<div class="message bot">
+<div class="bubble">${text}</div>
+</div>
+`;
+
+}
+
+function sendMessage(){
+
+let input=document.getElementById("question");
+
+let text=input.value.trim();
+
+if(text==="") return;
+
+addUser(text);
+
+input.value="";
+
+setTimeout(()=>{
+reply(text);
+},700);
+
+}
+  function reply(question){
+
+let q = question.toLowerCase();
+
+let answer = "";
+
+if(q.includes("bonjour") || q.includes("salut") || q.includes("hello")){
+
+answer = "👋 Bonjour ! Heureux de vous aider. Que souhaitez-vous cuisiner aujourd'hui ?";
+
+}
+
+else if(q.includes("riz")){
+
+answer = `
+🍚 Pour réussir un bon riz :
+
+• Rincer le riz avant cuisson.
+• Utiliser environ 2 volumes d'eau pour 1 volume de riz.
+• Porter à ébullition.
+• Cuire à feu doux 15 à 20 minutes.
+• Laisser reposer 5 minutes avant de servir.
+`;
+
+}
+
+else if(q.includes("poulet")){
+
+answer = `
+🍗 Cuisson du poulet :
+
+• Assaisonner selon votre goût.
+• Faire chauffer un peu d'huile.
+• Cuire 8 à 12 minutes par face selon l'épaisseur.
+• La viande ne doit plus être rose à l'intérieur.
+`;
+
+}
+
+else if(q.includes("omelette") || q.includes("oeuf")){
+
+answer = `
+🍳 Omelette facile :
+
+• 2 ou 3 œufs
+• Sel
+• Poivre
+• Un peu de beurre
+
+Battre les œufs puis cuire 2 à 3 minutes à feu moyen.
+`;
+
+}
+
+else if(q.includes("pâte") || q.includes("pates")){
+
+answer = `
+🍝 Cuisson des pâtes :
+
+• Faire bouillir une grande casserole d'eau.
+• Ajouter du sel.
+• Cuire selon le temps indiqué sur le paquet.
+• Égoutter puis servir avec la sauce de votre choix.
+`;
+
+}
+
+else if(q.includes("gâteau")){
+
+answer = `
+🎂 Gâteau simple :
+
+• 250 g de farine
+• 150 g de sucre
+• 3 œufs
+• 100 g de beurre
+• 1 sachet de levure
+
+Cuire environ 35 minutes à 180°C.
+`;
+
+}
+
+else if(q.includes("poisson")){
+
+answer = `
+🐟 Pour un poisson grillé :
+
+• Saler et poivrer.
+• Ajouter ail, citron et persil.
+• Cuire environ 6 à 8 minutes de chaque côté.
+`;
+
+}
+
+else if(q.includes("salade")){
+
+answer = `
+🥗 Une salade équilibrée peut contenir :
+
+• Laitue
+• Tomates
+• Concombre
+• Carottes
+• Avocat
+• Œufs ou poulet
+• Vinaigrette maison
+`;
+
+}
+
+else if(q.includes("merci")){
+
+answer = "😊 Avec plaisir ! Bonne cuisine et à bientôt.";
+
+}
+
+else{
+
+answer = `
+Je peux vous aider sur :
+
+🍳 les recettes
+
+🥩 les viandes
+
+🐟 les poissons
+
+🍝 les pâtes
+
+🍚 le riz
+
+🥗 les salades
+
+🍰 les desserts
+
+🥘 les sauces
+
+Posez-moi une question plus précise.
+`;
+
+}
+
+addBot(answer);
+
+chat.scrollTop = chat.scrollHeight;
+
+}
+
+document.getElementById("question").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+sendMessage();
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>
