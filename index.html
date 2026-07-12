@@ -186,15 +186,10 @@ try{
 
 const result =
 await Pi.authenticate(
-
-["username"],
-
+["username", "payments"],
 payment=>{
-
-console.log(payment);
-
+console.log("Paiement:", payment);
 }
-
 );
 
 
