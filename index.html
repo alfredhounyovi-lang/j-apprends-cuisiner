@@ -1,78 +1,165 @@
-<!DOCTYPE html><html>
-<head><title>Pi Testnet Reward</title><script src="https://sdk.minepi.com/pi-sdk.js"></script><style>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Pi Testnet Reward</title>
+
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+
+<style>
 
 body{
+
 font-family:Arial;
-background:#f4f6fb;
+
+background:#f5f5f5;
+
 padding:20px;
+
 }
 
+
 .card{
-background:white;
-padding:20px;
-border-radius:15px;
+
 max-width:500px;
+
 margin:auto;
-box-shadow:0 5px 20px #ddd;
+
+background:white;
+
+padding:20px;
+
+border-radius:15px;
+
 }
+
 
 button{
 
 width:100%;
+
 padding:15px;
+
 margin-top:10px;
-border:none;
+
+border:0;
+
 border-radius:10px;
+
 font-size:16px;
-cursor:pointer;
 
 }
+
 
 .connect{
-background:#ffb300;
+
+background:#f5b700;
+
 }
 
+
 .send{
+
 background:#6c5ce7;
+
 color:white;
+
 }
 
 
 input{
 
 width:100%;
+
 padding:12px;
+
 margin-top:8px;
-border-radius:8px;
-border:1px solid #ccc;
 
 }
 
 
-.wallet{
+.item{
 
 background:#eee;
+
 padding:10px;
+
 margin-top:8px;
+
 border-radius:8px;
 
 }
 
-</style></head><body><div class="card"><h2>🥧 Pi Testnet Reward</h2><button class="connect" onclick="connectPi()">
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="card">
+
+
+<h2>🥧 Pi Testnet Reward</h2>
+
+
+<button class="connect" onclick="connectPi()">
+
 🔑 Connecter Pi
-</button><p id="user">
+
+</button>
+
+
+<p id="user">
+
 Non connecté
-</p><h3>Wallets Testnet</h3><input id="w1" placeholder="Wallet 1">
+
+</p>
+
+
+
+<h3>Wallets Testnet</h3>
+
+
+<input id="w1" placeholder="Wallet 1">
+
 <input id="w2" placeholder="Wallet 2">
+
 <input id="w3" placeholder="Wallet 3">
+
 <input id="w4" placeholder="Wallet 4">
-<input id="w5" placeholder="Wallet 5"><button class="send" onclick="startQueue()">
-🚀 Envoyer 0.01 π aux 5 wallets
-</button><h3>Historique</h3><div id="history"></div></div><script>
+
+<input id="w5" placeholder="Wallet 5">
 
 
-let user=null;
+<button class="send" onclick="startSend()">
 
+🚀 Envoyer 0.01 π
+
+</button>
+
+
+
+<h3>Historique</h3>
+
+
+<div id="history"></div>
+
+
+</div>
+
+
+
+
+
+<script>
 
 
 Pi.init({
@@ -85,8 +172,11 @@ sandbox:true
 
 
 
+let user=null;
 
-// Connexion Pi
+let history=[];
+
+
 
 async function connectPi(){
 
@@ -94,11 +184,12 @@ async function connectPi(){
 try{
 
 
-user = await Pi.authenticate(
+const result =
+await Pi.authenticate(
 
 ["username"],
 
-function(payment){
+payment=>{
 
 console.log(payment);
 
@@ -108,17 +199,28 @@ console.log(payment);
 
 
 
+console.log(result);
+
+
+user=result;
+
+
+
 document.getElementById("user").innerHTML=
 
-"✅ Connecté : "+user.username;
+"✅ Connecté : "
+
++ result.user.username;
 
 
 
 }
 
-catch(e){
+catch(error){
 
-alert(e);
+console.log(error);
+
+alert("Connexion échouée");
 
 }
 
@@ -131,13 +233,7 @@ alert(e);
 
 
 
-let wallets=[];
-
-let history=[];
-
-
-
-function displayHistory(){
+function showHistory(){
 
 
 let box=document.getElementById("history");
@@ -146,24 +242,23 @@ let box=document.getElementById("history");
 box.innerHTML="";
 
 
-history.forEach(item=>{
+history.forEach(x=>{
 
 
-box.innerHTML +=
+box.innerHTML +=`
 
-`
+<div class="item">
 
-<div class="wallet">
-
-${item.wallet}
+${x.wallet}
 
 <br>
 
-${item.status}
+${x.status}
 
 </div>
 
 `;
+
 
 });
 
@@ -176,12 +271,13 @@ ${item.status}
 
 
 
-async function startQueue(){
+async function startSend(){
+
 
 
 if(!user){
 
-alert("Connecte Pi avant");
+alert("Connecte Pi");
 
 return;
 
@@ -189,206 +285,181 @@ return;
 
 
 
-wallets=[
+let wallets=[
 
-document.getElementById("w1").value,
+w1.value,
 
-document.getElementById("w2").value,
+w2.value,
 
-document.getElementById("w3").value,
+w3.value,
 
-document.getElementById("w4").value,
+w4.value,
 
-document.getElementById("w5").value
+w5.value
 
-];
-
-
-
-wallets = wallets.filter(x=>x);
+].filter(x=>x);
 
 
 
 for(let wallet of wallets){
 
 
+
 history.push({
 
-wallet:wallet,
+wallet,
 
 status:"⏳ En cours"
 
 });
 
 
-displayHistory();
+showHistory();
 
 
 
 try{
 
 
-await sendPayment(wallet);
+await sendPi(wallet);
 
 
 
-updateStatus(wallet,"✅ Envoyé");
-
-
-
-}
-
-catch(error){
-
-
-updateStatus(wallet,"❌ Erreur");
-
-
-console.log(error);
-
-
-
-}
-
-
-}
-
-
-
-alert("Terminé");
-
-
-}
-
-
-
-
-
-
-function updateStatus(wallet,status){
-
-
-let item=history.find(
+history.find(
 
 x=>x.wallet===wallet
 
-);
+).status="✅ Envoyé";
 
-
-if(item){
-
-item.status=status;
-
-displayHistory();
-
-}
 
 
 }
 
+catch(e){
+
+
+console.log(e);
 
 
 
+history.find(
+
+x=>x.wallet===wallet
+
+).status="❌ "+e;
 
 
-
-
-
-async function sendPayment(wallet){
-
-
-
-// création paiement
-
-
-let create = await fetch(
-
-"/api/create-payment",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-amount:0.01,
-
-recipient:wallet
-
-})
-
-
-}
-
-);
-
-
-
-let payment = await create.json();
-
-
-
-if(!payment.identifier){
-
-throw "Création paiement échouée";
 
 }
 
 
 
-let paymentId=payment.identifier;
+showHistory();
 
 
 
-// APPROBATION PI BROWSER
+}
 
 
-let approval = await Pi.createPayment(
+
+}
+
+
+
+
+
+
+
+
+async function sendPi(wallet){
+
+
+
+return new Promise((resolve,reject)=>{
+
+
+Pi.createPayment(
+
 
 {
 
 amount:0.01,
+
 
 memo:"Testnet reward",
 
+
 metadata:{
+
 
 recipient:wallet
 
+
 }
 
+
 },
 
 
 {
 
 
-onReadyForServerApproval: async function(id){
+onReadyForServerApproval:function(paymentId){
 
 
-await fetch("/api/approve",
 
-{
+fetch("/api/create-payment",{
+
 
 method:"POST",
 
+
 headers:{
+
 
 "Content-Type":"application/json"
 
 },
 
+
 body:JSON.stringify({
 
-paymentId:id
+
+paymentId,
+
+recipient:wallet
+
 
 })
+
+
+});
+
+
+
+
+fetch("/api/approve",{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+},
+
+
+body:JSON.stringify({
+
+
+paymentId
+
+
+})
+
 
 });
 
@@ -397,60 +468,89 @@ paymentId:id
 
 
 
-onReadyForServerCompletion: async function(id,txid){
+
+
+onReadyForServerCompletion:function(paymentId,txid){
 
 
 
-await fetch("/api/complete",
+fetch("/api/complete",{
 
-{
 
 method:"POST",
 
+
 headers:{
+
 
 "Content-Type":"application/json"
 
 },
 
+
 body:JSON.stringify({
 
-paymentId:id,
 
-txid:txid
+paymentId,
+
+txid
+
 
 })
 
-});
+
+})
+
+.then(()=>resolve())
+
+.catch(reject);
+
 
 
 },
+
+
 
 
 
 onCancel:function(){
 
-throw "Paiement annulé";
+
+reject("Annulé");
+
 
 },
 
 
+
+
+
 onError:function(error){
 
-throw error;
+
+reject(error.message);
+
 
 }
 
 
+
 }
+
+
 
 );
 
 
+});
 
 }
 
 
 
-</script></body>
-  </html>
+</script>
+
+
+</body>
+
+</html>
